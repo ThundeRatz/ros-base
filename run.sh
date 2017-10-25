@@ -9,7 +9,7 @@ else
     DOCKER=docker
 fi
 
-xhost +local:
+xhost +local:root
 CMD="$DOCKER run --rm --privileged --network host -e DISPLAY -e QT_X11_NO_MITSHM=1 -v /dev/bus/usb -v /tmp/.X11-unix:/tmp/.X11-unix:ro"
 CONTAINER="thunderatz/ros-base"
 if (( $# == 0 )) ; then
