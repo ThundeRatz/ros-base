@@ -3,7 +3,7 @@ FROM ${base_image_prefix}ubuntu:xenial
 MAINTAINER Tiago Koji Castro Shibata
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
-    build-essential dirmngr locales \
+    build-essential dirmngr locales sudo \
     && rm -rf /var/lib/apt/lists/*
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
