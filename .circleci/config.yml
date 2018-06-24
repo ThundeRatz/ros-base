@@ -1,21 +1,18 @@
 version: 2
 jobs:
-  build:
+  build: &default-build
     docker:
       - image: docker:18.05
-    working_directory: ~/ros-base
     steps:
       - checkout
       - setup_remote_docker
-      - run: sh ./build.sh
+      - run: ./build.sh
   build-cuda:
-    docker:
-      - image: docker:18.05
-    working_directory: ~/ros-base
+    <<: *default-build
     steps:
       - checkout
       - setup_remote_docker
-      - run: sh ./build-cuda.sh
+      - run: ./build-cuda.sh
 workflows:
   version: 2
   build-all:
