@@ -21,7 +21,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: ./build-cuda.sh
+      - run: docker build -t "thunderatz/ros-base-cuda" --build-arg base_image=nvidia/cuda:9.2-cudnn7-devel-ubuntu16.04 docker/
       - deploy:
           name: Push Docker image
           command: |
