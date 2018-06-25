@@ -17,6 +17,7 @@ jobs:
             docker save -o /tmp/artifacts/image.tar thunderatz/ros-base
       - store_artifacts:
           path: /tmp/artifacts/image.tar
+          destination: image.tar
       - persist_to_workspace:
           root: /tmp/artifacts
           paths:
@@ -50,6 +51,7 @@ jobs:
             docker save -o /tmp/artifacts/image.tar thunderatz/ros-base-cuda
       - store_artifacts:
           path: /tmp/artifacts/image.tar
+          destination: image.tar
       - persist_to_workspace:
           root: /tmp/artifacts
           paths:
