@@ -1,39 +1,70 @@
-version: 2
-jobs:
-  build: &default-build
+defaults:
+  job: &job-defaults
     docker:
       - image: docker:18.05
+version: 2
+jobs:
+  build:
+    <<: *job-defaults
     steps:
       - checkout
       - setup_remote_docker
       - run: ./build.sh
+      - run:
+          name: Save Docker image artifact
+          command: |
+            mkdir -p /tmp/artifacts
+            docker save -o /tmp/artifacts/image.tar thunderatz/ros-base
+      - store_artifacts:
+          path: /tmp/artifacts/image.tar
+      - persist_to_workspace:
+          root: /tmp/artifacts
+          paths:
+            - image.tar
+  push: &push-defaults
+    <<: *job-defaults
+    steps:
+      - setup_remote_docker
+      - attach_workspace:
+          at: /tmp/artifacts
       - deploy:
           name: Push Docker image
           command: |
             if [ ! -z "${DOCKERHUB_USER}" ]; then
+              docker load -i /tmp/artifacts/image.tar
               docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
-              docker push thunderatz/ros-base
+              docker push $(docker images --format '{{.Repository}}' 'thunderatz/*')
             else
               echo Docker credentials not found
             fi
   build-cuda:
-    <<: *default-build
+    <<: *job-defaults
     steps:
       - checkout
       - setup_remote_docker
       - run: docker build -t "thunderatz/ros-base-cuda" --build-arg base_image=nvidia/cuda:9.2-cudnn7-devel-ubuntu16.04 docker/
-      - deploy:
-          name: Push Docker image
+      - run:
+          name: Save Docker image artifact
           command: |
-            if [ ! -z "${DOCKERHUB_USER}" ]; then
-              docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
-              docker push thunderatz/ros-base-cuda
-            else
-              echo Docker credentials not found
-            fi
+            mkdir -p /tmp/artifacts
+            docker save -o /tmp/artifacts/image.tar thunderatz/ros-base-cuda
+      - store_artifacts:
+          path: /tmp/artifacts/image.tar
+      - persist_to_workspace:
+          root: /tmp/artifacts
+          paths:
+            - image.tar
+  push-cuda:
+    <<: *push-defaults
 workflows:
   version: 2
-  build-all:
+  build-and-push:
     jobs:
       - build
+      - push:
+          requires:
+            - build
       - build-cuda
+      - push-cuda:
+          requires:
+            - build-cuda
