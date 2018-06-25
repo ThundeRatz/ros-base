@@ -7,12 +7,30 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: ./build.sh
+      - deploy:
+          name: Push Docker image
+          command: |
+            if [ ! -z "${DOCKERHUB_USER}" ]; then
+              docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
+              docker push thunderatz/ros-base
+            else
+              echo Docker credentials not found
+            fi
   build-cuda:
     <<: *default-build
     steps:
       - checkout
       - setup_remote_docker
       - run: ./build-cuda.sh
+      - deploy:
+          name: Push Docker image
+          command: |
+            if [ ! -z "${DOCKERHUB_USER}" ]; then
+              docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
+              docker push thunderatz/ros-base-cuda
+            else
+              echo Docker credentials not found
+            fi
 workflows:
   version: 2
   build-all:
