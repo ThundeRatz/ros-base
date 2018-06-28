@@ -1,6 +1,6 @@
-ARG base_image_prefix=
-FROM ${base_image_prefix}ubuntu:xenial
-MAINTAINER Tiago Koji Castro Shibata
+ARG base_image=ubuntu:16.04
+FROM ${base_image}
+LABEL maintainer="Tiago Koji Castro Shibata"
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
     build-essential dirmngr locales sudo \
