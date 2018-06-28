@@ -43,7 +43,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker build -t "thunderatz/ros-base-cuda" --build-arg base_image=nvidia/cuda:9.2-cudnn7-devel-ubuntu16.04 docker/
+      - run: docker build -t "thunderatz/ros-base-cuda" --build-arg base_image=nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04 docker/
       - run:
           name: Save Docker image artifact
           command: |
