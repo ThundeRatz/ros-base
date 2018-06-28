@@ -2,7 +2,6 @@ defaults:
   job: &job-defaults
     docker:
       - image: docker:18.05
-    context: dockerhub-bot
     steps:
       - checkout
       - setup_remote_docker
@@ -38,5 +37,7 @@ workflows:
   version: 2
   build-and-push:
     jobs:
-      - build
-      - build-cuda
+      - build:
+          context: dockerhub-bot
+      - build-cuda:
+          context: dockerhub-bot
