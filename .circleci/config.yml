@@ -2,18 +2,19 @@ defaults:
   job: &job-defaults
     docker:
       - image: docker:18.05
+    context: dockerhub-bot
     steps:
       - checkout
       - setup_remote_docker
-      - run: ${BUILD_COMMAND}
+      - run: $BUILD_COMMAND
       - deploy:
           name: Push Docker image
           command: |
-            if [ ! -z "${DOCKERHUB_USER}" ]; then
-              docker login -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
+            if [[ "$CIRCLE_PROJECT_USERNAME" == ThundeRatz && "$CIRCLE_BRANCH" == master ]]; then
+              docker login -u "$DOCKERHUB_USER" -p "$DOCKERHUB_PASSWORD"
               docker push $(docker images --format '{{.Repository}}' 'thunderatz/*')
             else
-              echo Docker credentials not found
+              echo Skipping push to Docker Hub since this is not the master branch in the ThundeRatz organization
             fi
       - run:
           name: Save Docker image artifact
