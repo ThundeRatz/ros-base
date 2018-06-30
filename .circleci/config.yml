@@ -2,7 +2,6 @@ defaults:
   job: &job-defaults
     docker:
       - image: docker:18.05
-    context: dockerhub-bot
     steps:
       - checkout
       - setup_remote_docker
